@@ -1,7 +1,8 @@
-package com.proyecto.gestion_vehiculos.repository;
+package com.proyecto.gestion_vehiculos.DOCUMENTO.repository;
 
-import com.proyecto.gestion_vehiculos.entity.Documento;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
 
 public interface DocumentoRepository extends JpaRepository<Documento, Long> {
 }

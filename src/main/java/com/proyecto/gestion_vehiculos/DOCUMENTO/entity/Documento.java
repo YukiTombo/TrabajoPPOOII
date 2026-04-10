@@ -1,7 +1,8 @@
-package com.proyecto.gestion_vehiculos.entity;
+package com.proyecto.gestion_vehiculos.DOCUMENTO.entity;
 
-import com.proyecto.gestion_vehiculos.enums.TipoObligatorio;
-import com.proyecto.gestion_vehiculos.enums.TipoVehiculoAplica;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.enums.TipoObligatorio;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.enums.TipoVehiculoAplica;
+
 import jakarta.persistence.*;
 
 @Entity

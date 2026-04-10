@@ -1,7 +1,8 @@
-package com.proyecto.gestion_vehiculos.controller;
+package com.proyecto.gestion_vehiculos.DOCUMENTO.controller;
 
-import com.proyecto.gestion_vehiculos.entity.Documento;
-import com.proyecto.gestion_vehiculos.service.DocumentoService;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.service.DocumentoService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
