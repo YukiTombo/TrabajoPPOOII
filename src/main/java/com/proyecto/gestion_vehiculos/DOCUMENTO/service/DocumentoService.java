@@ -1,7 +1,8 @@
-package com.proyecto.gestion_vehiculos.service;
+package com.proyecto.gestion_vehiculos.DOCUMENTO.service;
 
-import com.proyecto.gestion_vehiculos.entity.Documento;
-import com.proyecto.gestion_vehiculos.repository.DocumentoRepository;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.repository.DocumentoRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
