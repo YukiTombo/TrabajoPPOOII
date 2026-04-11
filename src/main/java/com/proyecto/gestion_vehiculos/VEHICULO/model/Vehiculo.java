@@ -1,5 +1,9 @@
 package com.proyecto.gestion_vehiculos.VEHICULO.model;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -15,7 +19,7 @@ import lombok.Setter;
 })
 public class Vehiculo {
 
-        @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -43,6 +47,10 @@ public class Vehiculo {
     private String marca;
 
     private String linea;
+
+    @OneToMany(mappedBy = "vehiculo", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<VehiculoDocumento> documentos;
 
 
     // Getters y Setters

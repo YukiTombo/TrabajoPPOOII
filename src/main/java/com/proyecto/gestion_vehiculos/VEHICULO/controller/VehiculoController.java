@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
@@ -46,6 +47,14 @@ public class VehiculoController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         service.eliminar(id);
+    }
+
+    @PostMapping("/con-documentos")
+    public Vehiculo crearConDocumentos(
+
+        @RequestBody Vehiculo vehiculo,
+        @RequestParam List<Long> documentosIds) {
+            return service.guardarConDocumentos(vehiculo, documentosIds);
     }
 
 }
