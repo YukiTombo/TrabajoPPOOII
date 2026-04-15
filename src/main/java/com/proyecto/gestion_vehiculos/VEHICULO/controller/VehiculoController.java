@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
+import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.service.VehiculoService;
 
 import jakarta.validation.Valid;
@@ -55,6 +56,11 @@ public class VehiculoController {
         @RequestBody Vehiculo vehiculo,
         @RequestParam List<Long> documentosIds) {
             return service.guardarConDocumentos(vehiculo, documentosIds);
+    }
+
+    @GetMapping("/{id}/documentos")
+    public List<VehiculoDocumento> obtenerDocumentos(@PathVariable Long id) {
+        return service.obtenerDocumentosPorVehiculo(id);
     }
 
 }

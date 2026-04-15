@@ -26,6 +26,11 @@ public class VehiculoService {
     @Autowired
     private VehiculoRepository repository;
 
+
+    public List<VehiculoDocumento> obtenerDocumentosPorVehiculo(Long vehiculoId) {
+        return vehiculoDocumentoRepository.findByVehiculoId(vehiculoId);
+    }
+    
     public Vehiculo guardar(Vehiculo vehiculo) {
 
         if (repository.findByPlaca(vehiculo.getPlaca()).isPresent()) {
