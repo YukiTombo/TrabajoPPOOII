@@ -147,13 +147,34 @@ public class VehiculoService {
         vd.setFechaVencimiento(java.time.LocalDate.now().plusYears(1));
 
         // REGLA DEL PROYECTO
-        vd.setEstado("En Verificacion");
+        vd.setEstado("En Verificación");
 
         vehiculoDocumentoRepository.save(vd);
     }
 
-    return vGuardado;
+    return vGuardado;    
 }
+
+    // Buscar por placa
+    public Vehiculo buscarPorPlaca(String placa) {
+        return repository.findByPlaca(placa)
+            .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+    }
+
+    // Buscar por tipo
+    public List<Vehiculo> buscarPorTipo(String tipo) {
+        return repository.findByTipoVehiculoIgnoreCase(tipo);
+    }
+
+    // Buscar por documento
+    public List<Vehiculo> buscarPorDocumento(String nombre) {
+        return repository.findByDocumentoNombre(nombre);
+    }
+
+    // Buscar por estado del documento
+    public List<Vehiculo> buscarPorEstadoDocumento(String estado) {
+        return repository.findByEstadoDocumento(estado);
+    }
 
 
 }

@@ -63,4 +63,27 @@ public class VehiculoController {
         return service.obtenerDocumentosPorVehiculo(id);
     }
 
+    // Buscar por placa
+    @GetMapping("/placa/{placa}")
+    public Vehiculo buscarPorPlaca(@PathVariable String placa) {
+        return service.buscarPorPlaca(placa);
+    }
+
+    // Buscar por tipo vehículo
+    @GetMapping("/tipo")
+    public List<Vehiculo> buscarPorTipo(@RequestParam String tipo) {
+        return service.buscarPorTipo(tipo);
+    }
+
+    // Buscar por tipo de documento
+    @GetMapping("/documento")
+    public List<Vehiculo> buscarPorDocumento(@RequestParam String nombre) {
+        return service.buscarPorDocumento(nombre);
+    }
+
+    // Buscar por estado del documento
+    @GetMapping("/estado")
+    public List<Vehiculo> buscarPorEstado(@RequestParam String estado) {
+        return service.buscarPorEstadoDocumento(estado);
+    }
 }
