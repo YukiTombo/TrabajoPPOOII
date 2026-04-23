@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
+import com.proyecto.gestion_vehiculos.DOCUMENTO.enums.TipoVehiculoAplica;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.repository.DocumentoRepository;
+import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.repository.VehiculoDocumentoRepository;
@@ -129,14 +131,14 @@ public class VehiculoService {
 
         //DOCUMENTOS QUE NO APLICAN
         if (vehiculo.getTipoVehiculo().equalsIgnoreCase("Automovil") &&
-            documento.getTipoVehiculoAplica().name().equals("M")) {
-            throw new RuntimeException("Documento no aplica a automóvil");
-        }
+        documento.getTipoVehiculoAplica() == TipoVehiculoAplica.M) {
+        throw new RuntimeException("Documento no aplica a automóvil");
+    }
 
         if (vehiculo.getTipoVehiculo().equalsIgnoreCase("Motocicleta") &&
-            documento.getTipoVehiculoAplica().name().equals("A")) {
-            throw new RuntimeException("Documento no aplica a motocicleta");
-        }
+        documento.getTipoVehiculoAplica() == TipoVehiculoAplica.A) {
+        throw new RuntimeException("Documento no aplica a motocicleta");
+    }
 
 
         VehiculoDocumento vd = new VehiculoDocumento();
@@ -145,9 +147,12 @@ public class VehiculoService {
 
         vd.setFechaExpedicion(java.time.LocalDate.now());
         vd.setFechaVencimiento(java.time.LocalDate.now().plusYears(1));
+        if (vd.getFechaExpedicion().isAfter(vd.getFechaVencimiento())) {
+            throw new RuntimeException("Fecha de expedición no puede ser mayor a vencimiento");
+        }
 
         // REGLA DEL PROYECTO
-        vd.setEstado("En Verificación");
+        vd.setEstado(EstadoDocumento.EN_VERIFICACION);
 
         vehiculoDocumentoRepository.save(vd);
     }
@@ -173,7 +178,16 @@ public class VehiculoService {
 
     // Buscar por estado del documento
     public List<Vehiculo> buscarPorEstadoDocumento(String estado) {
-        return repository.findByEstadoDocumento(estado);
+
+        EstadoDocumento estadoEnum;
+    
+        try {
+            estadoEnum = EstadoDocumento.valueOf(estado.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Estado inválido");
+        }
+    
+        return repository.findByEstadoDocumento(estadoEnum);
     }
 
 

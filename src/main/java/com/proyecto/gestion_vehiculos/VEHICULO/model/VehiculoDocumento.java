@@ -3,8 +3,11 @@ package com.proyecto.gestion_vehiculos.VEHICULO.model;
 import java.time.LocalDate;
 
 import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
+import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,7 +34,8 @@ public class VehiculoDocumento {
     private LocalDate fechaExpedicion;
     private LocalDate fechaVencimiento;
 
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    private EstadoDocumento estado;
 
     // GETTERS Y SETTERS
     public Long getId() { return id; }
@@ -48,7 +52,12 @@ public class VehiculoDocumento {
     public LocalDate getFechaVencimiento() { return fechaVencimiento; }
     public void setFechaVencimiento(LocalDate fechaVencimiento) { this.fechaVencimiento = fechaVencimiento; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public EstadoDocumento getEstado() {
+        return estado;
+    }
+    
+    public void setEstado(EstadoDocumento estado) {
+        this.estado = estado;
+    }
 
 }

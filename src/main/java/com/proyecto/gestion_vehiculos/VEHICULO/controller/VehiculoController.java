@@ -25,11 +25,6 @@ public class VehiculoController {
     @Autowired
     private VehiculoService service;
 
-    @PostMapping
-    public Vehiculo crear(@Valid @RequestBody Vehiculo vehiculo) {
-        return service.guardar(vehiculo);
-    }
-
     @GetMapping
     public List<Vehiculo> listar() {
         return service.listar();
@@ -52,10 +47,10 @@ public class VehiculoController {
 
     @PostMapping("/con-documentos")
     public Vehiculo crearConDocumentos(
-
         @RequestBody Vehiculo vehiculo,
-        @RequestParam List<Long> documentosIds) {
-            return service.guardarConDocumentos(vehiculo, documentosIds);
+        @RequestParam(required = false) List<Long> documentosIds) {
+
+        return service.guardarConDocumentos(vehiculo, documentosIds);
     }
 
     @GetMapping("/{id}/documentos")

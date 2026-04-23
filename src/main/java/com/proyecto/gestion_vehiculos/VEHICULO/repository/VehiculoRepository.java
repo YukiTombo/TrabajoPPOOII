@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
 
 public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>{
@@ -21,6 +22,6 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>{
 
     // Buscar por estado del documento
     @Query("SELECT v FROM Vehiculo v JOIN v.documentos vd WHERE vd.estado = :estado")
-    List<Vehiculo> findByEstadoDocumento(@Param("estado") String estado);
+    List<Vehiculo> findByEstadoDocumento(@Param("estado") EstadoDocumento estado);
 
 }

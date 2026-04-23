@@ -12,8 +12,10 @@ public class Documento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String codigo;
 
+    @Column(nullable = false)
     private String nombre;
 
     @Enumerated(EnumType.STRING)
