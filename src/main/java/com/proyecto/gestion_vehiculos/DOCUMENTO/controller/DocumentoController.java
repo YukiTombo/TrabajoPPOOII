@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import com.proyecto.gestion_vehiculos.response.ApiResponse;
+
 @RestController
 @RequestMapping("/documentos")
 public class DocumentoController {
@@ -18,8 +21,9 @@ public class DocumentoController {
     }
 
     @PostMapping
-    public Documento crear(@RequestBody Documento d) {
-        return service.guardar(d);
+    public ResponseEntity<ApiResponse> crear(@RequestBody Documento d) {
+        service.guardar(d);
+        return ResponseEntity.ok(new ApiResponse("Documento creado con éxito"));
     }
 
     @GetMapping
@@ -28,12 +32,14 @@ public class DocumentoController {
     }
 
     @PutMapping("/{id}")
-    public Documento actualizar(@PathVariable Long id, @RequestBody Documento d) {
-        return service.actualizar(id, d);
+    public ResponseEntity<ApiResponse> actualizar(@PathVariable Long id, @RequestBody Documento d) {
+        service.actualizar(id, d);
+        return ResponseEntity.ok(new ApiResponse("Documento actualizado con éxito"));
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> eliminar(@PathVariable Long id) {
         service.eliminar(id);
+        return ResponseEntity.ok(new ApiResponse("Documento eliminado con éxito"));
     }
 }

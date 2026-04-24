@@ -1,6 +1,7 @@
 package com.proyecto.gestion_vehiculos.VEHICULO.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.enums.TipoVehiculoAplica;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.repository.DocumentoRepository;
+import com.proyecto.gestion_vehiculos.VEHICULO.dto.VehiculoDocumentoDTO;
 import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoDocumento;
@@ -189,6 +191,115 @@ public class VehiculoService {
     
         return repository.findByEstadoDocumento(estadoEnum);
     }
+
+    //Metodo para cargar con PDF
+
+    public void cargarDocumentos(Long vehiculoId, List<VehiculoDocumento> docs) {
+
+        Vehiculo vehiculo = repository.findById(vehiculoId)
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+    
+        for (VehiculoDocumento vd : docs) {
+    
+            Documento documento = documentoRepository.findById(vd.getDocumento().getId())
+                    .orElseThrow(() -> new RuntimeException("Documento no existe"));
+    
+            // VALIDAR BASE64
+            if (vd.getArchivoBase64() == null || vd.getArchivoBase64().isEmpty()) {
+                throw new RuntimeException("Debe enviar el archivo en Base64");
+            }
+    
+            // 🔥 BUSCAR SI YA EXISTE
+            Optional<VehiculoDocumento> existenteOpt =
+                    vehiculoDocumentoRepository.findByVehiculo_IdAndDocumento_Id(
+                            vehiculoId, documento.getId());
+    
+
+            // 🔥 LOGS AQUÍ
+                System.out.println("=================================");
+                System.out.println("Vehiculo ID: " + vehiculoId);
+                System.out.println("Documento ID: " + documento.getId());
+                System.out.println("¿Existe en BD?: " + existenteOpt.isPresent());
+                System.out.println("=================================");
+
+            if (existenteOpt.isPresent()) {
+    
+                // ✅ ACTUALIZAR
+                VehiculoDocumento existente = existenteOpt.get();
+    
+                existente.setArchivoBase64(vd.getArchivoBase64());
+                existente.setFechaExpedicion(vd.getFechaExpedicion());
+                existente.setFechaVencimiento(vd.getFechaVencimiento());
+                existente.setEstado(EstadoDocumento.EN_VERIFICACION);
+    
+                vehiculoDocumentoRepository.save(existente);
+    
+            } else {
+    
+                // 🆕 CREAR (por si no existe)
+                VehiculoDocumento nuevo = new VehiculoDocumento();
+    
+                nuevo.setVehiculo(vehiculo);
+                nuevo.setDocumento(documento);
+                nuevo.setArchivoBase64(vd.getArchivoBase64());
+                nuevo.setFechaExpedicion(vd.getFechaExpedicion());
+                nuevo.setFechaVencimiento(vd.getFechaVencimiento());
+                nuevo.setEstado(EstadoDocumento.EN_VERIFICACION);
+    
+                vehiculoDocumentoRepository.save(nuevo);
+            }
+        }
+    }
+
+    public void cargarDocumentosDTO(Long vehiculoId, List<VehiculoDocumentoDTO> docs) {
+
+        Vehiculo vehiculo = repository.findById(vehiculoId)
+                .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+    
+        for (VehiculoDocumentoDTO dto : docs) {
+    
+            Documento documento = documentoRepository.findById(dto.getDocumentoId())
+                    .orElseThrow(() -> new RuntimeException("Documento no existe"));
+    
+            // 🔥 BUSCAR SI YA EXISTE
+            Optional<VehiculoDocumento> existenteOpt =
+                    vehiculoDocumentoRepository.findByVehiculo_IdAndDocumento_Id(
+                            vehiculoId, documento.getId());
+    
+            // 🔥 LOG (opcional para prueba)
+            System.out.println("Vehiculo: " + vehiculoId +
+                               " Documento: " + documento.getId() +
+                               " Existe: " + existenteOpt.isPresent());
+    
+            if (existenteOpt.isPresent()) {
+    
+                // ✅ ACTUALIZAR
+                VehiculoDocumento existente = existenteOpt.get();
+    
+                existente.setArchivoBase64(dto.getArchivoBase64());
+                existente.setFechaExpedicion(dto.getFechaExpedicion());
+                existente.setFechaVencimiento(dto.getFechaVencimiento());
+                existente.setEstado(EstadoDocumento.EN_VERIFICACION);
+    
+                vehiculoDocumentoRepository.save(existente);
+    
+            } else {
+    
+                // 🆕 CREAR SOLO SI NO EXISTE
+                VehiculoDocumento nuevo = new VehiculoDocumento();
+    
+                nuevo.setVehiculo(vehiculo);
+                nuevo.setDocumento(documento);
+                nuevo.setArchivoBase64(dto.getArchivoBase64());
+                nuevo.setFechaExpedicion(dto.getFechaExpedicion());
+                nuevo.setFechaVencimiento(dto.getFechaVencimiento());
+                nuevo.setEstado(EstadoDocumento.EN_VERIFICACION);
+    
+                vehiculoDocumentoRepository.save(nuevo);
+            }
+        }
+    }
+    
 
 
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
 import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -37,6 +39,12 @@ public class VehiculoDocumento {
     @Enumerated(EnumType.STRING)
     private EstadoDocumento estado;
 
+    //PDF BASE64
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private String archivoBase64;
+
+
     // GETTERS Y SETTERS
     public Long getId() { return id; }
 
@@ -58,6 +66,14 @@ public class VehiculoDocumento {
     
     public void setEstado(EstadoDocumento estado) {
         this.estado = estado;
+    }
+
+    public String getArchivoBase64() {
+        return archivoBase64;
+    }
+    
+    public void setArchivoBase64(String archivoBase64) {
+        this.archivoBase64 = archivoBase64;
     }
 
 }

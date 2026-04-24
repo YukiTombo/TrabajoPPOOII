@@ -1,6 +1,8 @@
 package com.proyecto.gestion_vehiculos.VEHICULO.controller;
 
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import com.proyecto.gestion_vehiculos.response.ApiResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.proyecto.gestion_vehiculos.VEHICULO.dto.VehiculoDocumentoDTO;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.service.VehiculoService;
@@ -36,21 +39,30 @@ public class VehiculoController {
     }
 
     @PutMapping("/{id}")
-    public Vehiculo actualizar(@PathVariable Long id, @Valid @RequestBody Vehiculo vehiculo) {
-        return service.actualizar(id, vehiculo);
+    public ResponseEntity<ApiResponse> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Vehiculo vehiculo) {
+    
+        service.actualizar(id, vehiculo);
+    
+        return ResponseEntity.ok(new ApiResponse("Vehículo actualizado con éxito"));
     }
 
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> eliminar(@PathVariable Long id) {
+
         service.eliminar(id);
+
+        return ResponseEntity.ok(new ApiResponse("Vehículo eliminado con éxito"));
     }
 
     @PostMapping("/con-documentos")
-    public Vehiculo crearConDocumentos(
+    public ResponseEntity<ApiResponse> crearConDocumentos(
         @RequestBody Vehiculo vehiculo,
-        @RequestParam(required = false) List<Long> documentosIds) {
+        @RequestParam List<Long> documentosIds) {
+            service.guardarConDocumentos(vehiculo, documentosIds);
 
-        return service.guardarConDocumentos(vehiculo, documentosIds);
+        return ResponseEntity.ok(new ApiResponse("Vehículo creado con documentos correctamente"));
     }
 
     @GetMapping("/{id}/documentos")
@@ -80,5 +92,16 @@ public class VehiculoController {
     @GetMapping("/estado")
     public List<Vehiculo> buscarPorEstado(@RequestParam String estado) {
         return service.buscarPorEstadoDocumento(estado);
+    }
+
+    //Cargar Documentos
+    @PostMapping("/documentos/cargar")
+    public ResponseEntity<ApiResponse> cargarDocumentos(
+        @RequestParam Long vehiculoId,
+        @RequestBody List<VehiculoDocumentoDTO> documentos) {
+
+        service.cargarDocumentosDTO(vehiculoId, documentos);
+
+        return ResponseEntity.ok(new ApiResponse("Documentos cargados correctamente"));
     }
 }
