@@ -34,12 +34,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Rutas públicas
         if (path.startsWith("/auth/")
-                || path.equals("/api/vehiculos/vencidos")
-                || path.startsWith("/api/vehiculos/por-vencer")
-                || path.equals("/api/vehiculos/conductores-operativos")
-                || path.startsWith("/api/vehiculos/placa/")
-                || path.equals("/api/personas/totales")) {
-
+            || path.equals("/api/vehiculos/vencidos")
+            || path.startsWith("/api/vehiculos/placa/")
+            || path.startsWith("/api/vehiculos/por-vencer")
+            || path.equals("/api/vehiculos/conductores-operativos")
+            || path.equals("/personas/totales")) {
+        
             chain.doFilter(request, response);
             return;
         }

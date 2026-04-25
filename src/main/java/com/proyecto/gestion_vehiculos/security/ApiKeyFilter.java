@@ -39,7 +39,7 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             || path.startsWith("/api/vehiculos/placa/")
             || path.startsWith("/api/vehiculos/por-vencer")
             || path.equals("/api/vehiculos/conductores-operativos")
-            || path.equals("/api/personas/totales")
+            || path.equals("/personas/totales")
             || path.startsWith("/swagger-ui/")
             || path.startsWith("/v3/api-docs")) {
         

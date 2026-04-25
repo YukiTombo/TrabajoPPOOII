@@ -2,6 +2,7 @@ package com.proyecto.gestion_vehiculos.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,30 +41,26 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Públicos
+                // 🔓 LOGIN
                 .requestMatchers("/auth/**").permitAll()
-
-                .requestMatchers("/personas").permitAll()
-
-                .requestMatchers("/api/vehiculos/vencidos").permitAll()
-
-                .requestMatchers("/api/vehiculos/placa/**").permitAll()
-
-                .requestMatchers("/api/vehiculos/por-vencer/**").permitAll()
-
-                .requestMatchers("/api/vehiculos/conductores-operativos").permitAll()
-
-                .requestMatchers("/api/personas/totales").permitAll()
-
-                // Swagger opcional
-                .requestMatchers(
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**"
-                ).permitAll()
-
-                // Privados
+            
+                // 🔓 CREAR PERSONA (usuario)
+                .requestMatchers(HttpMethod.POST, "/personas").permitAll()
+            
+                // 🔓 SERVICIOS PÚBLICOS (LO QUE TE PIDEN)
+                .requestMatchers(HttpMethod.GET, "/api/vehiculos/vencidos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/vehiculos/placa/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/vehiculos/por-vencer/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/vehiculos/conductores-operativos").permitAll()
+                .requestMatchers(HttpMethod.GET, "/personas/totales").permitAll()
+            
+                // 🔓 SWAGGER
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            
+                // 🔒 TODO LO DEMÁS
                 .anyRequest().authenticated()
-            )
+            ) 
+            
 
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class);
