@@ -1,7 +1,9 @@
 package com.proyecto.gestion_vehiculos.VEHICULO.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,11 +11,15 @@ import org.springframework.stereotype.Service;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.entity.Documento;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.enums.TipoVehiculoAplica;
 import com.proyecto.gestion_vehiculos.DOCUMENTO.repository.DocumentoRepository;
+import com.proyecto.gestion_vehiculos.PERSONA.entity.Persona;
+import com.proyecto.gestion_vehiculos.PERSONA.repository.PersonaRepository;
 import com.proyecto.gestion_vehiculos.VEHICULO.dto.VehiculoDocumentoDTO;
 import com.proyecto.gestion_vehiculos.VEHICULO.enums.EstadoDocumento;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.Vehiculo;
 import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoDocumento;
+import com.proyecto.gestion_vehiculos.VEHICULO.model.VehiculoPersona;
 import com.proyecto.gestion_vehiculos.VEHICULO.repository.VehiculoDocumentoRepository;
+import com.proyecto.gestion_vehiculos.VEHICULO.repository.VehiculoPersonaRepository;
 import com.proyecto.gestion_vehiculos.VEHICULO.repository.VehiculoRepository;
 
 @Service
@@ -22,6 +28,13 @@ public class VehiculoService {
     //INYECCIONES RELACION
     @Autowired
     private VehiculoDocumentoRepository vehiculoDocumentoRepository;
+
+
+    @Autowired
+    private PersonaRepository personaRepository;
+
+    @Autowired
+    private VehiculoPersonaRepository vehiculoPersonaRepository;
 
     @Autowired
     private DocumentoRepository documentoRepository;
@@ -299,7 +312,77 @@ public class VehiculoService {
             }
         }
     }
-    
 
+    //METODO PARA ASOCIAR CONDUCTOR
+    
+    public void asociarConductor(Long vehiculoId, Long personaId) {
+
+        repository.findById(vehiculoId)
+            .orElseThrow(() -> new RuntimeException("Vehículo no encontrado"));
+    
+        Persona persona = personaRepository.findById(personaId)
+                .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
+    
+        // 🔥 VALIDAR QUE SEA CONDUCTOR
+        if (!persona.getTipoPersona().equalsIgnoreCase("C")) {
+            throw new RuntimeException("La persona no es conductor");
+        }
+    
+        // 🔥 VALIDAR QUE NO ESTÉ REPETIDO
+        boolean existe = vehiculoPersonaRepository
+                .findByVehiculoIdAndPersonaId(vehiculoId, personaId)
+                .isPresent();
+    
+        if (existe) {
+            throw new RuntimeException("El conductor ya está asignado");
+        }
+    
+        // 🔥 CREAR RELACIÓN
+        VehiculoPersona vp = new VehiculoPersona();
+
+        vp.setVehiculoId(vehiculoId);
+        vp.setPersonaId(personaId);
+        vp.setFechaAsociacion(LocalDate.now());
+        vp.setEstado("EA");
+
+        vehiculoPersonaRepository.save(vp);
+    }
+
+
+    //metodo cambiar estado conductor
+
+    public VehiculoPersona cambiarEstado(Long idRelacion, String estado) {
+
+        VehiculoPersona relacion = vehiculoPersonaRepository.findById(idRelacion)
+                .orElseThrow(() -> new RuntimeException("Relación no encontrada"));
+    
+        if (!estado.equals("PO") &&
+            !estado.equals("EA") &&
+            !estado.equals("RO")) {
+    
+            throw new RuntimeException("Estado inválido");
+        }
+    
+        relacion.setEstado(estado);
+    
+        return vehiculoPersonaRepository.save(relacion);
+    }
+
+
+    //VEHICULOS VENCIDOS
+
+    public List<Vehiculo> obtenerVehiculosConDocumentosVencidos() {
+        return repository.obtenerVehiculosConDocumentosVencidos();
+    }
+
+    //vehiculos con documentos por vencer
+    public List<VehiculoDocumento> porVencer(int dias) {
+        return vehiculoDocumentoRepository.porVencer(dias);
+    }
+
+    //Conductores que pueden operar
+    public List<VehiculoPersona> conductoresOperativos() {
+        return vehiculoPersonaRepository.findByEstado("PO");
+    }
 
 }

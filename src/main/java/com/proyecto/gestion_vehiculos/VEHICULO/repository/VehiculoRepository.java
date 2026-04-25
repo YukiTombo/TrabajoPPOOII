@@ -24,4 +24,9 @@ public interface VehiculoRepository extends JpaRepository<Vehiculo, Long>{
     @Query("SELECT v FROM Vehiculo v JOIN v.documentos vd WHERE vd.estado = :estado")
     List<Vehiculo> findByEstadoDocumento(@Param("estado") EstadoDocumento estado);
 
+    //BUSCAR POR DOCUMENTOS VENCIDOS
+
+    @Query("SELECT DISTINCT v FROM Vehiculo v JOIN v.documentos vd WHERE vd.fechaVencimiento < CURRENT_DATE")
+    List<Vehiculo> obtenerVehiculosConDocumentosVencidos();
+    
 }

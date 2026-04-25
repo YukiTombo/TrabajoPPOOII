@@ -104,4 +104,40 @@ public class VehiculoController {
 
         return ResponseEntity.ok(new ApiResponse("Documentos cargados correctamente"));
     }
+
+    @PostMapping("/asociar-conductor")
+    public String asociarConductor(
+        @RequestParam Long vehiculoId,
+        @RequestParam Long personaId) {
+            
+            service.asociarConductor(vehiculoId, personaId);
+
+            return "Conductor asociado correctamente";
+    }
+
+    //BUSCAR DOCUMENTOS VENCIDOS
+    @GetMapping("/vencidos")
+    public List<Vehiculo> obtenerVencidos() {
+        return service.obtenerVehiculosConDocumentosVencidos();
+    }
+
+    //Buscar Veihuclos con documentos a vencer
+    @GetMapping("/por-vencer/{dias}")
+    public ResponseEntity<?> porVencer(@PathVariable int dias) {
+        return ResponseEntity.ok(service.porVencer(dias));
+    }
+
+    //Conductores que pueden operar
+    @GetMapping("/conductores-operativos")
+    public ResponseEntity<?> conductoresOperativos() {
+        return ResponseEntity.ok(service.conductoresOperativos());
+    }
+
+    @PutMapping("/estado/{idRelacion}")
+    public ResponseEntity<?> cambiarEstado(@PathVariable Long idRelacion,
+        @RequestBody String estado) {
+            return ResponseEntity.ok(
+                service.cambiarEstado(idRelacion, estado)
+        );
+    }
 }
