@@ -15,4 +15,7 @@ public interface VehiculoPersonaRepository extends JpaRepository<VehiculoPersona
 
     List<VehiculoPersona> findByEstado(String estado);
 
+
+    List<VehiculoPersona> findByPersonaId(Long personaId);
+
 }

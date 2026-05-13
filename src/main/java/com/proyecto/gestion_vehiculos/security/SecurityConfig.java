@@ -32,7 +32,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+
         http
+
+            .cors(cors -> {})
+
             .csrf(csrf -> csrf.disable())
 
             .sessionManagement(sess ->
@@ -40,27 +44,23 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
-
-                // 🔓 LOGIN
                 .requestMatchers("/auth/**").permitAll()
-            
-                // 🔓 CREAR PERSONA (usuario)
+
                 .requestMatchers(HttpMethod.POST, "/personas").permitAll()
-            
-                // 🔓 SERVICIOS PÚBLICOS (LO QUE TE PIDEN)
+
                 .requestMatchers(HttpMethod.GET, "/api/vehiculos/vencidos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/vehiculos/placa/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/vehiculos/por-vencer/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/vehiculos/conductores-operativos").permitAll()
                 .requestMatchers(HttpMethod.GET, "/personas/totales").permitAll()
-            
-                // 🔓 SWAGGER
+
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-            
-                // 🔒 TODO LO DEMÁS
+
+                .requestMatchers("/trayectos/**")
+            .authenticated()
+
                 .anyRequest().authenticated()
-            ) 
-            
+            )
 
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class);

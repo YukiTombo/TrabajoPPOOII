@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ public class PersonaController {
 
     @PostMapping
     public ResponseEntity<ApiResponse> crear(@RequestBody Persona p) {
-        service.guardar(p);
+        service.crear(p);
         return ResponseEntity.ok(new ApiResponse("Persona creada con éxito"));
     }
 
@@ -40,10 +41,15 @@ public class PersonaController {
         @RequestBody Persona persona) {
             return ResponseEntity.ok(service.actualizar(id, persona));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> eliminar(
+        @PathVariable Long id) {
 
-    @GetMapping("/totales")
-    public ResponseEntity<?> totalPorTipo() {
-        return ResponseEntity.ok(service.totalPorTipo());
+            service.eliminar(id);
+            return ResponseEntity.ok(
+                new ApiResponse("Persona eliminada correctamente")
+        );
     }
+
 
 }

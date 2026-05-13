@@ -1,8 +1,8 @@
 package com.proyecto.gestion_vehiculos.PERSONA.service;
 
 import java.util.List;
+import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,78 +10,146 @@ import com.proyecto.gestion_vehiculos.PERSONA.entity.Persona;
 import com.proyecto.gestion_vehiculos.PERSONA.repository.PersonaRepository;
 import com.proyecto.gestion_vehiculos.USUARIO.entity.Usuario;
 import com.proyecto.gestion_vehiculos.USUARIO.entity.UsuarioId;
-import com.proyecto.gestion_vehiculos.USUARIO.service.UsuarioService;
+import com.proyecto.gestion_vehiculos.USUARIO.repository.UsuarioRepository;
 
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class PersonaService {
 
+    private final PersonaRepository personaRepository;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PersonaRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
+    // =========================
+    // CREAR PERSONA
+    // =========================
+    public Persona crear(Persona persona){
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+        Persona personaGuardada =
+                personaRepository.save(persona);
 
-    public List<Persona> listar() {
-        return repository.findAll();
-    }
+        // CREAR USUARIO SI ES ADMIN
+        if(persona.getTipoPersona().equals("A")){
 
-    public Persona guardar(Persona persona) {
+            Usuario usuario = new Usuario();
 
-        Persona personaGuardada = repository.save(persona);
-    
-        Usuario usuario = new Usuario();
-    
-        String login = generarLogin(persona);
-    
-        UsuarioId usuarioId =
-                new UsuarioId(personaGuardada.getId(), login);
-    
-        usuario.setId(usuarioId);
-        usuario.setPassword(passwordEncoder.encode("123456"));
-        usuario.setApiKey(java.util.UUID.randomUUID().toString());
-    
-        // NUEVO CAMPO ROL
-        if (persona.getTipoPersona().equalsIgnoreCase("A")) {
-            usuario.setRol("ROLE_ADMIN");
-        } else {
-            usuario.setRol("ROLE_USER");
+            String login =
+                    persona.getNombres()
+                            .substring(0,1)
+                            .toLowerCase()
+                    +
+                    persona.getApellidos()
+                            .substring(0,1)
+                            .toLowerCase()
+                    +
+                    persona.getIdentificacion();
+
+            UsuarioId usuarioId = new UsuarioId();
+
+            usuarioId.setPersonaId(
+                    personaGuardada.getId()
+            );
+
+            usuarioId.setLogin(login);
+
+            usuario.setId(usuarioId);
+
+            usuario.setPassword(
+                    passwordEncoder.encode("123456")
+            );
+
+            usuario.setApiKey(
+                    UUID.randomUUID().toString()
+            );
+
+            usuario.setRol("ADMIN");
+
+            usuarioRepository.save(usuario);
         }
-    
-        usuarioService.guardar(usuario);
-    
+
         return personaGuardada;
     }
 
-    private String generarLogin(Persona p) {
-
-        return p.getNombres().substring(0,1).toLowerCase()
-             + p.getApellidos().substring(0,1).toLowerCase()
-             + p.getIdentificacion();
+    // =========================
+    // LISTAR
+    // =========================
+    public List<Persona> listar(){
+        return personaRepository.findAll();
     }
 
-    public Persona actualizar(Long id, Persona nuevaPersona) {
+    // =========================
+    // BUSCAR POR ID
+    // =========================
+    public Persona buscar(Long id){
 
-        Persona persona = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
-    
-        persona.setIdentificacion(nuevaPersona.getIdentificacion());
-        persona.setTipoIdentificacion(nuevaPersona.getTipoIdentificacion());
-        persona.setNombres(nuevaPersona.getNombres());
-        persona.setApellidos(nuevaPersona.getApellidos());
-        persona.setCorreo(nuevaPersona.getCorreo());
-        persona.setTipoPersona(nuevaPersona.getTipoPersona());
-    
-        return repository.save(persona);
+        return personaRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Persona no encontrada"
+                        ));
     }
 
-    public List<Object[]> totalPorTipo() {
-        return repository.totalPorTipo();
+    // =========================
+    // ACTUALIZAR
+    // =========================
+    public Persona actualizar(
+            Long id,
+            Persona nuevaPersona
+    ){
+
+        Persona persona =
+                personaRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Persona no encontrada"
+                                )
+                        );
+
+        persona.setIdentificacion(
+                nuevaPersona.getIdentificacion()
+        );
+
+        persona.setTipoIdentificacion(
+                nuevaPersona.getTipoIdentificacion()
+        );
+
+        persona.setNombres(
+                nuevaPersona.getNombres()
+        );
+
+        persona.setApellidos(
+                nuevaPersona.getApellidos()
+        );
+
+        persona.setCorreo(
+                nuevaPersona.getCorreo()
+        );
+
+        persona.setTipoPersona(
+                nuevaPersona.getTipoPersona()
+        );
+
+        // ENTREGA 3
+        persona.setLicenciaConduccion(
+                nuevaPersona.getLicenciaConduccion()
+        );
+
+        persona.setFechaVigenciaLicencia(
+                nuevaPersona.getFechaVigenciaLicencia()
+        );
+
+        return personaRepository.save(persona);
     }
 
+    // =========================
+    // ELIMINAR
+    // =========================
+    public void eliminar(Long id){
+
+        personaRepository.deleteById(id);
+    }
 }
